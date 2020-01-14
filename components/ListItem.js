@@ -9,11 +9,11 @@ const ListItem = (props) => {
             <View style={styles.container}>
             <Image
               style={styles.image}
-              source={{uri: item.thumbnails.w160}}
+              source={{uri: props.item.thumbnails.w160}}
             />
             <View style= {styles.details}>
-              <Text style= {styles.titles}>{item.title}</Text>
-              <Text style= {styles.description}>{item.description}</Text>
+              <Text style= {styles.titles}>{props.item.title}</Text>
+              <Text style= {styles.description}>{props.item.description}</Text>
             </View>
             </View>
           </TouchableOpacity>
@@ -53,3 +53,4 @@ const ListItem = (props) => {
         padding: 10,
       }
     });
+    export default ListItem;

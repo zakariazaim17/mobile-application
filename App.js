@@ -2,7 +2,7 @@ import React from 'react';
 
 import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from 'react-native';
 
-import List from '../components/List.js';
+import List from './components/List';
 
 const mediaArray = [
   {
@@ -37,9 +37,9 @@ const mediaArray = [
 
 const App = () => {
   return (
-    <View style= {{marginTop: 19}}>
+
     <List mediaArray={mediaArray} />
-    </View>
+
   );
 };
 

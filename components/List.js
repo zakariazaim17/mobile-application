@@ -2,17 +2,21 @@ import React from 'react';
 
 import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from 'react-native';
 
-import ListItem from './ListItem.js';
+import ListItem from './ListItem';
 const List = (props) => {
-  console.log(props);
+
   return (
+    <View style={{marginTop: 19}}>
     <FlatList
-    data={mediaArray}
+    data={props.mediaArray}
       renderItem={({item}) => {
-        <ListItem singleMedia={item} />
+        return (
+        <ListItem item={item} />
+        )
       }}
       />
 
+     </View>
   );
 };
-
+export default List;
