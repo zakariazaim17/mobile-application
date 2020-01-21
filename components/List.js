@@ -6,7 +6,7 @@ import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from 'react-n
 import ListItem from './ListItem';
 import {MediaContext} from '../contexts/MediaContexts';
 import {getAllMedia} from '../hooks/APIHooks';
-const List = () => {
+const List = (props) => {
  const [media, setMedia] = useContext(MediaContext);
  const [data, loading] = getAllMedia();
 
@@ -17,12 +17,16 @@ const List = () => {
     data={media}
     keyExtractor={(item, index) => index.toString()}
 
-      renderItem={({item}) => {
-        return (
-      <ListItem item={item} />
-        )
-      }}
+      renderItem={
+        ({item}) =>
+
+      <ListItem
+      navigation ={props.navigation}
+      item={item} />
+
+      }
       />
+
 
      </View>
   );

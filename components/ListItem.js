@@ -1,4 +1,5 @@
 import React from 'react';
+import Single from '../views/Single';
 
 import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from 'react-native';
 
@@ -6,9 +7,17 @@ const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/"
 const ListItem = (props) => {
 console.log(props);
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+    onPress={
+      ()=> {
+        props.navigation.push('Single', {file: props.item.filename, title:props.item.title} );
+      }
+    }
+    >
+
             <View style={styles.container}>
             <Image
+
               style={styles.image}
               source={{uri:mediaURL + props.item.thumbnails.w160}}
             />
