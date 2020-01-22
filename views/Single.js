@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, Text, Image} from 'react-native';
+import PropTypes from 'prop-types';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/"
 const Single = (props) => {
@@ -34,5 +35,9 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
 });
+
+Single.propTypes = {
+  style: PropTypes.object,
+};
 
 export default Single;

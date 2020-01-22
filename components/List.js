@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 
 import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from 'react-native';
-
+import PropTypes from 'prop-types';
 
 import ListItem from './ListItem';
 import {MediaContext} from '../contexts/MediaContexts';
@@ -30,5 +30,9 @@ const List = (props) => {
 
      </View>
   );
+};
+
+List.propTypes = {
+  style: PropTypes.object,
 };
 export default List;

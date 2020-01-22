@@ -1,5 +1,6 @@
 import React from 'react';
 import Single from '../views/Single';
+import PropTypes from 'prop-types';
 
 import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from 'react-native';
 
@@ -63,4 +64,8 @@ console.log(props);
         padding: 10,
       }
     });
+
+    ListItem.propTypes = {
+      style: PropTypes.object,
+    };
     export default ListItem;

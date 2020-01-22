@@ -32,4 +32,63 @@ const getAllMedia = () => {
   }, []);
   return [data, loading];
 }
-export { getAllMedia };
+
+const login = async (user, pass) => {
+
+  const data = {
+    username: user,
+    password: pass,
+  };
+
+
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+   body: JSON.stringify(data),
+  };
+
+
+    try {
+    const response = await fetch(apiUrl + 'login', fetchOptions);
+    const json = await response.json();
+    return json;
+    } catch(e){
+      console.log('error',e.message);
+    }
+  };
+
+
+
+  const register = async (user,full, pass, ema) => {
+
+    const data = {
+      username: user,
+      full_name: full,
+      password: pass,
+      email: ema,
+    };
+
+
+    const fetchOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+     body: JSON.stringify(data),
+    };
+
+
+      try {
+      const response = await fetch(apiUrl + 'users', fetchOptions);
+      const json = await response.json();
+      return json;
+      } catch(e){
+        console.log('error',e.message);
+      }
+    };
+
+
+
+export { getAllMedia, login, register };
