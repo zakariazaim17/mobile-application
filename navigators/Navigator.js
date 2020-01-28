@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Header, Content, Icon } from 'native-base';
 import {createStackNavigator} from 'react-navigation-stack';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
@@ -25,7 +26,27 @@ const TabNavigator = createBottomTabNavigator(
         title: 'Profile',
       },
     },
+
   },
+
+  {
+    defaultNavigationOptions: ({navigation}) => ({
+      tabBarIcon: () => {
+        const {routeName} = navigation.state;
+        let iconName;
+        if (routeName === 'Home') {
+          iconName = 'home';
+        } else if (routeName === 'Profile') {
+          iconName = 'person';
+        }
+        return <Icon
+             name={iconName}
+             size={25}
+           />;
+         },
+        }),
+      },
+
   {
     initialRouteName:'Home',
   }

@@ -2,32 +2,38 @@ import React from 'react';
 import Single from '../views/Single';
 import PropTypes from 'prop-types';
 
-import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from 'react-native';
+import { Container, Header, Content, List, Thumbnail, Text, Left, Body, Right, Button } from 'native-base';
+import {ListItem as Listi} from 'native-base';
+import {StyleSheet, View, FlatList, TouchableOpacity, Image} from 'react-native';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/"
 const ListItem = (props) => {
-console.log(props);
+//console.log(props);
   return (
-    <TouchableOpacity
-    onPress={
-      ()=> {
-        props.navigation.push('Single', {file: props.item.filename, title:props.item.title} );
-      }
-    }
-    >
 
-            <View style={styles.container}>
-            <Image
+<Listi thumbnail>
+              <Left>
+                <Thumbnail square source={{uri:mediaURL + props.item.thumbnails.w160}} />
+              </Left>
+              <Body>
+                <Text>{props.item.title}</Text>
+                <Text note numberOfLines={1}>{props.item.description}</Text>
+              </Body>
+              <Right>
 
-              style={styles.image}
-              source={{uri:mediaURL + props.item.thumbnails.w160}}
-            />
-            <View style= {styles.details}>
-              <Text style= {styles.titles}>{props.item.title}</Text>
-              <Text style= {styles.description}>{props.item.description}</Text>
-            </View>
-            </View>
-          </TouchableOpacity>
+                <Button rounded success
+                onPress={
+                  ()=> {
+                    props.navigation.push('Single', {file: props.item.filename, title:props.item.title, description:props.item.description} );
+                  }
+                }>
+                  <Text>View</Text>
+                </Button>
+
+              </Right>
+            </Listi>
+
+
   )
 }
 

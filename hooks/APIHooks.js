@@ -17,7 +17,7 @@ const getAllMedia = () => {
       return await tnresponse.json();
     }));
 
-    console.log('apihooks', result);
+    //console.log('apihooks', result);
 
 
     setData(result);
@@ -89,6 +89,20 @@ const login = async (user, pass) => {
       }
     };
 
+    const fetchprof = async (id) => {
+
+        try {
+        const response = await fetch(apiUrl + `tags/avatar_${id}`);
+        const json = await response.json();
+        console.log('PIIII' + json);
+        return json;
+        } catch(e){
+          console.log('error',e.message);
+        }
+      };
 
 
-export { getAllMedia, login, register };
+
+
+export { getAllMedia, login, register, fetchprof };
+
