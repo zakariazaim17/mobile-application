@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Header, Content, Form, Item, Input, Button, Label, Text } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Button, Label, Text, div } from 'native-base';
 import { useState, useEffect } from "react";
 import {AsyncStorage} from 'react-native';
 import  {login, register, fetchprof} from '../hooks/APIHooks';
@@ -8,8 +8,57 @@ import FormTextInput from '../components/FormTextInput';
 import useSignUpForm from '../components/LoginHooks';
 
 const Login = (props) => {
+
+
+  const Box =[
+  <Form>
+        <Item >
+        <Label>Username</Label>
+          <Input autoCapitalize='none'
+            onChangeText={handleUsernameChange}
+            value = {inputs.username}/>
+        </Item>
+
+        <Item>
+          <Label>FullName</Label>
+
+          <Input autoCapitalize='none'
+             onChangeText={handleFullnameChange}
+           value = {inputs.full_name}/>
+        </Item>
+
+        <Item>
+          <Label>Password</Label>
+
+          <Input autoCapitalize='none'
+           onChangeText={handlePasswordChange}
+           value = {inputs.password}/>
+        </Item>
+        <Item >
+          <Label>email</Label>
+          <Input autoCapitalize='none'
+           onChangeText={handleEmailChange}
+           value = {inputs.email}/>
+        </Item>
+        <Text>{error}</Text>
+      <Button  onPress={
+     () => {
+      RegisterAsync();
+     }
+   } ><Text>Register</Text></Button>
+ </Form>];
+
+
   // props is needed for navigation
   const [error, setError] = useState('');
+  const [sth , setsth] = useState(Box);
+  console.log('12121221' + sth);
+
+
+
+
+
+
 
   const { inputs, handleUsernameChange, handlePasswordChange, handleFullnameChange, handleEmailChange} =  useSignUpForm();
   const signInAsync = async () => {
@@ -35,6 +84,18 @@ const Login = (props) => {
 
 
 
+    ////
+
+
+
+const toggleDiv = () => {
+  const  { show }= this.state;
+  this.setState ( { show: !show});
+}
+
+
+
+
     const RegisterAsync = async () => {
       try {
         const result = await register(inputs.username, inputs.full_name, inputs.password, inputs.email);
@@ -52,46 +113,20 @@ const Login = (props) => {
       }
       };
    return (
-     <Container>
+     <Container style={{ marginTop:20,}}>
 
-     <Form>
-            <Item >
-            <Label>Username</Label>
-              <Input autoCapitalize='none'
-                onChangeText={handleUsernameChange}
-                value = {inputs.username}/>
-            </Item>
+       <Button onPress= {() => setsth( whatever=> 'rrrrrrrrr')}>
+         <Text>++++</Text></Button>
 
-            <Item>
-              <Label>FullName</Label>
+         <Form style={{backgroundColor:'red',
+        height:100,}}><Text style={{color:'white',}}>{sth}</Text></Form>
 
-              <Input autoCapitalize='none'
-                 onChangeText={handleFullnameChange}
-               value = {inputs.full_name}/>
-            </Item>
 
-            <Item>
-              <Label>Password</Label>
 
-              <Input autoCapitalize='none'
-               onChangeText={handlePasswordChange}
-               value = {inputs.password}/>
-            </Item>
-            <Item >
-              <Label>email</Label>
-              <Input autoCapitalize='none'
-               onChangeText={handleEmailChange}
-               value = {inputs.email}/>
-            </Item>
-            <Text>{error}</Text>
-          <Button  onPress={
-         () => {
-          RegisterAsync();
-         }
-       } ><Text>Register</Text></Button>
-          </Form>
 
-          <Form>
+
+
+          <Form style={{backgroundColor:'green',}}>
             <Item>
               <Label>Username</Label>
               <Input autoCapitalize='none'
