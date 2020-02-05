@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/"
 const Single = (props) => {
-  console.log(props.filename);
+  //console.log(props.filename);
   const { navigation } = props;
   const fili = navigation.getParam('file', 'not found');
   console.log(fili);

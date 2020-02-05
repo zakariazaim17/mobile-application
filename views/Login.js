@@ -1,58 +1,46 @@
 import React, { Component } from 'react';
-import { Container, Header, Content, Form, Item, Input, Button, Label, Text, div } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Button, Label, Text, Card, CardItem, Body, Title, H2 } from 'native-base';
 import { useState, useEffect } from "react";
 import {AsyncStorage} from 'react-native';
-import  {login, register, fetchprof} from '../hooks/APIHooks';
+import  {fetchGET, fetchPOST, fetchprof} from '../hooks/APIHooks';
 import PropTypes from 'prop-types';
 import FormTextInput from '../components/FormTextInput';
-import useSignUpForm from '../components/LoginHooks';
+import useSignUpForm from '../hooks/LoginHooks';
 
 const Login = (props) => {
+  const [toggleForm, setToggleForm] = useState(true);
 
 
-  const Box =[
-  <Form>
-        <Item >
-        <Label>Username</Label>
-          <Input autoCapitalize='none'
-            onChangeText={handleUsernameChange}
-            value = {inputs.username}/>
-        </Item>
+  const {
+    handleUsernameChange,
+    handlePasswordChange,
+    handleEmailChange,
+    handleFullnameChange,
+    handleConfirmPasswordChange,
+    validateField,
+    validateOnSend,
+    checkAvail,
+    inputs,
+    errors,
+    setErrors,
+  } = useSignUpForm();
 
-        <Item>
-          <Label>FullName</Label>
 
-          <Input autoCapitalize='none'
-             onChangeText={handleFullnameChange}
-           value = {inputs.full_name}/>
-        </Item>
-
-        <Item>
-          <Label>Password</Label>
-
-          <Input autoCapitalize='none'
-           onChangeText={handlePasswordChange}
-           value = {inputs.password}/>
-        </Item>
-        <Item >
-          <Label>email</Label>
-          <Input autoCapitalize='none'
-           onChangeText={handleEmailChange}
-           value = {inputs.email}/>
-        </Item>
-        <Text>{error}</Text>
-      <Button  onPress={
-     () => {
-      RegisterAsync();
-     }
-   } ><Text>Register</Text></Button>
- </Form>];
 
 
   // props is needed for navigation
-  const [error, setError] = useState('');
-  const [sth , setsth] = useState(Box);
-  console.log('12121221' + sth);
+
+
+  const validationProperties = {
+    username: {username: inputs.username},
+    email: {email: inputs.email},
+    full_name: {full_name: inputs.full_name},
+    password: {password: inputs.password},
+    confirmPassword: {
+      password: inputs.password,
+      confirmPassword: inputs.confirmPassword,
+    },
+  };
 
 
 
@@ -60,101 +48,185 @@ const Login = (props) => {
 
 
 
-  const { inputs, handleUsernameChange, handlePasswordChange, handleFullnameChange, handleEmailChange} =  useSignUpForm();
+
   const signInAsync = async () => {
     try {
-      const user = await login(inputs.username, inputs.password);
+      const user = await fetchPOST('login', inputs);
 
-     // console.log('login', user);
+      console.log('login', user);
       await AsyncStorage.setItem('userToken', user.token);
       await AsyncStorage.setItem('user', JSON.stringify(user.user));
       const prof = await fetchprof(user.user.user_id);
       console.log('kkkkkk' + prof);
       await AsyncStorage.setItem('profile', JSON.stringify(prof));
 
-
-
-
       props.navigation.navigate('App');
     } catch(e){
+      console.log('signInAsync error: ' + e.message);
       console.log(e.message);
-    }
+      setErrors((errors) =>
+      ({
+        ...errors,
+        fetch: e.message,
+      }));
+  }
     };
 
 
 
 
-    ////
 
 
 
-const toggleDiv = () => {
-  const  { show }= this.state;
-  this.setState ( { show: !show});
-}
+
 
 
 
 
     const RegisterAsync = async () => {
-      try {
-        const result = await register(inputs.username, inputs.full_name, inputs.password, inputs.email);
+      const regValid = validateOnSend(validationProperties);
+      console.log('reg field errors', errors);
 
-       // console.log('register', result);
-        if(!result.error){
-          signInAsync();
-        }else {
-          setError('Please create an account')
-        }
-
-
-      } catch(e){
-        console.log(e.message);
+      if (!regValid) {
+        return;
       }
+      try {
+        console.log('sen inputs', inputs);
+        const user = inputs;
+      delete user.confirmPassword;
+      const result = await fetchPOST('users', user);
+
+       console.log('register', result);
+       signInAsync();
+      }
+       catch(e){
+        console.log('registerAsync error: ', e.message);
+        setErrors((errors) =>
+        ({
+          ...errors,
+          fetch: e.message,
+        }));
+    }
       };
    return (
-     <Container style={{ marginTop:20,}}>
+     <Container>
+       <Header>
+       <Body><Title>MyApp</Title></Body>
+       </Header>
+       <Content>
+       {/* login form */}
+       {toggleForm &&
+        <Form>
+          <Title>
+            <H2>Login</H2>
+          </Title>
+          <Item>
+            <FormTextInput
+              autoCapitalize='none'
+              value={inputs.username}
+              placeholder='username'
+              onChangeText={handleUsernameChange}
+            />
+          </Item>
+          <Item>
+            <FormTextInput
+              autoCapitalize='none'
+              value={inputs.password}
+              placeholder='password'
+              secureTextEntry={true}
+              onChangeText={handlePasswordChange}
+            />
+          </Item>
+          <Button full onPress={signInAsync}><Text>Sign in!</Text></Button>
+          <Button dark full onPress={() => {
+            setToggleForm(false);
+          }}>
+            <Text>or Register</Text>
+          </Button>
+        </Form>
+        }
 
-       <Button onPress= {() => setsth( whatever=> 'rrrrrrrrr')}>
-         <Text>++++</Text></Button>
+        {/* register form */}
+        {!toggleForm &&
+        <Form>
+          <Title>
+            <H2>Register</H2>
+          </Title>
+          <Item>
+            <FormTextInput
+              autoCapitalize='none'
+              value={inputs.username}
+              placeholder='username'
+              onChangeText={handleUsernameChange}
+              onEndEditing={() => {
+                checkAvail();
+                validateField(validationProperties.username);
+              }}
+             // error={errors.username}
+            />
+          </Item>
+          <Item>
+            <FormTextInput
+              autoCapitalize='none'
+              value={inputs.email}
+              placeholder='email'
+              onChangeText={handleEmailChange}
+              onEndEditing={() => {
+                validateField(validationProperties.email);
+              }}
+              //error={errors.email}
+            />
+          </Item>
+          <Item>
+            <FormTextInput
+              autoCapitalize='none'
+              value={inputs.full_name}
+              placeholder='fullname'
+              onChangeText={handleFullnameChange}
+              onEndEditing={() => {
+                validateField(validationProperties.full_name);
+              }}
+             // error={errors.full_name}
+            />
+          </Item>
+          <Item>
+            <FormTextInput
+              autoCapitalize='none'
+              value={inputs.password}
+              placeholder='password'
+              secureTextEntry={true}
+              onChangeText={handlePasswordChange}
+              onEndEditing={() => {
+                validateField(validationProperties.password);
+              }}
+            //  error={errors.password}
+            />
+          </Item>
+          <Item>
+            <FormTextInput
+              autoCapitalize='none'
+              value={inputs.confirmPassword}
+              placeholder='confirm password'
+              secureTextEntry={true}
+              onChangeText={handleConfirmPasswordChange}
+              onEndEditing={() => {
+                validateField(validationProperties.confirmPassword);
+              }}
+             // error={errors.confirmPassword}
+            />
+          </Item>
+          <Button full onPress={RegisterAsync}>
+            <Text>Register!</Text>
+          </Button>
+          <Button dark full onPress={() => {
+            setToggleForm(true);
+          }}>
+            <Text>or Login</Text>
+          </Button>
+        </Form>
+        }
 
-         <Form style={{backgroundColor:'red',
-        height:100,}}><Text style={{color:'white',}}>{sth}</Text></Form>
-
-
-
-
-
-
-          <Form style={{backgroundColor:'green',}}>
-            <Item>
-              <Label>Username</Label>
-              <Input autoCapitalize='none'
-
-           onChangeText={handleUsernameChange}
-           value = {inputs.username} />
-            </Item>
-            <Item>
-              <Label>Password</Label>
-              <Input autoCapitalize='none'
-
-           secureTextEntry={true}
-           onChangeText={handlePasswordChange}
-           value = {inputs.password}/>
-            </Item>
-            <Button onPress={
-         () => {
-           signInAsync();
-         }
-       } ><Text>Login</Text></Button>
-          </Form>
-
-
-
-
-
-
-
+      </Content>
    </Container>
    );
  };

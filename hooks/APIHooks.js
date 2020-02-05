@@ -2,19 +2,56 @@ import { useState, useEffect } from "react";
 
 const apiUrl = "http://media.mw.metropolia.fi/wbma/";
 
+
+const fetchGET = async (endpoint = '', params = '', token = '') => {
+  const fetchOptions = {
+    headers: {
+      'x-access-token': token,
+    },
+  };
+  const response = await fetch(apiUrl + endpoint + '/' + params,
+      fetchOptions);
+  if (!response.ok) {
+    throw new Error('fetchGET error: ' + response.status);
+  }
+  return await response.json();
+};
+
+const fetchPOST = async (endpoint = '', data = {}, token = '') => {
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': token,
+    },
+    body: JSON.stringify(data),
+  };
+  const response = await fetch(apiUrl + endpoint, fetchOptions);
+  const json = await response.json();
+  console.log(json);
+  if (response.status === 400 || response.status === 401) {
+    const message = Object.values(json).join();
+    throw new Error(message);
+  } else if (response.status > 299) {
+    throw new Error('fetchPOST error: ' + response.status);
+  }
+  return json;
+};
+
+
+
 const getAllMedia = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const fetchUrl = async() => {
+  const fetchMedia = async() => {
 
     try {
-    const response = await fetch(apiUrl + 'media/all');
-    const json = await response.json();
 
 
+
+    const json = await fetchGET('media/all');
     const result = await Promise.all(json.files.map(async (item) => {
-      const tnresponse = await fetch(apiUrl + 'media/'+ item.file_id);
-      return await tnresponse.json();
+      return await fetchGET('media', item.file_id);
     }));
 
     //console.log('apihooks', result);
@@ -23,71 +60,17 @@ const getAllMedia = () => {
     setData(result);
     setLoading(false);
     }catch(e){
-      console.log('error', e.message);
+      console.log('getAllMedia error', e.message);
 
     }
   }
   useEffect(() => {
-    fetchUrl();
+    fetchMedia();
   }, []);
   return [data, loading];
 }
 
-const login = async (user, pass) => {
 
-  const data = {
-    username: user,
-    password: pass,
-  };
-
-
-  const fetchOptions = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-   body: JSON.stringify(data),
-  };
-
-
-    try {
-    const response = await fetch(apiUrl + 'login', fetchOptions);
-    const json = await response.json();
-    return json;
-    } catch(e){
-      console.log('error',e.message);
-    }
-  };
-
-
-
-  const register = async (user,full, pass, ema) => {
-
-    const data = {
-      username: user,
-      full_name: full,
-      password: pass,
-      email: ema,
-    };
-
-
-    const fetchOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-     body: JSON.stringify(data),
-    };
-
-
-      try {
-      const response = await fetch(apiUrl + 'users', fetchOptions);
-      const json = await response.json();
-      return json;
-      } catch(e){
-        console.log('error',e.message);
-      }
-    };
 
     const fetchprof = async (id) => {
 
@@ -104,5 +87,5 @@ const login = async (user, pass) => {
 
 
 
-export { getAllMedia, login, register, fetchprof };
+export { getAllMedia, fetchGET, fetchPOST, fetchprof };
 

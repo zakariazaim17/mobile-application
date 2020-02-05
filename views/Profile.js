@@ -5,78 +5,93 @@ import { useState, useEffect } from "react";
 
 import { AsyncStorage } from 'react-native';
 import PropTypes from 'prop-types';
-import Login from '../views/Login';
-import useSignUpForm from '../components/LoginHooks';
+import {fetchGET} from '../hooks/APIHooks';
+import useSignUpForm from '../hooks/LoginHooks';
+import AsyncImage from '../components/AsyncImage';
+import {Dimensions} from 'react-native';
+
+const deviceHeight = Dimensions.get('window').height;
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/";
 
 const Profile = (props) => {
-  const [user, setUser] = useState({});
-  const [profile, setProfile] = useState({});
+  const [user, setUser] = useState({
+    userdata: {},
+    avatar: 'https://',
+  });
+
   const usertoState = async ()=> {
+    try {
+      const userFromStorage = await AsyncStorage.getItem('user');
+      const uData = JSON.parse(userFromStorage);
+      const avatarPic = await fetchGET('tags', 'avatar_' + uData.user_id);
+      console.log('avpic', avatarPic);
+      let avPic = '';
+      if (avatarPic.length === 0) { // if avatar is not set
+        avPic = 'https://placekitten.com/1024/1024';
+      } else {
+        avPic = mediaURL + avatarPic[0].filename;
+      }
+      setUser((user) => (
+        {
+          userdata: uData,
+          avatar: avPic,
+        }));
+    } catch (e) {
+      console.log('Profile error: ', e.message);
+    }
 
-    const userfromStorage = await AsyncStorage.getItem('user');
-    console.log("14", userfromStorage);
-    setUser(JSON.parse(userfromStorage));
-    const profilefromStorage = await AsyncStorage.getItem('profile');
-    console.log(JSON.parse(profilefromStorage)[0]);
-    setProfile(JSON.parse(profilefromStorage)[0]);
 
-
-  };
-  const signOutAsync = async () => {
-    await AsyncStorage.clear();
-    props.navigation.navigate('Auth');
   };
 
   useEffect(() => {
     usertoState();
   }, []);
 
-  return (
-    <Container>
 
-       <Card style={{flex:0}}>
-         <CardItem>
-           <Left>
-             <Icon name="person"/>
-             <Text>Username: {user.username}</Text>
+  const signOutAsync = async () => {
+    await AsyncStorage.clear();
+    props.navigation.navigate('Auth');
+  };
+console.log('ava', mediaURL + user.avatar);
 
-           </Left>
-         </CardItem>
-
-       </Card>
-
-       <Card style={{flex:0}}>
-         <CardItem>
-           <Body>
-              <Image
-                square
-                source={{uri: mediaURL + profile.filename}}
-                style={{height:300, width:300}}
-                />
-                <Text>Fullname: {user.fullname}</Text>
-                <Text>Email: {user.email}</Text>
-            </Body>
-         </CardItem>
-
-       </Card>
-       <Card style={{flex:0}}>
-         <CardItem>
-         <Button  onPress={signOutAsync} >
-           <Text>Sign_out</Text>
-         </Button>
-
+return (
+  <Container>
+    <Content>
+      <Card>
+        <CardItem header bordered>
+          <Icon name='person'/>
+          <Text>Username: {user.userdata.username}</Text>
+        </CardItem>
+        <CardItem>
+          <Body>
+            <AsyncImage
+              style={{
+                width: '100%',
+                height: deviceHeight / 2,
+              }}
+              spinnerColor='#777'
+              source={{uri: user.avatar}}
+            />
+          </Body>
+        </CardItem>
+        <CardItem>
+          <Body>
+            <Text>Fullname: {user.userdata.full_name}</Text>
+            <Text numberOfLines={1}>email: {user.userdata.email}</Text>
+          </Body>
+        </CardItem>
+        <CardItem footer bordered>
+          <Body>
+            <Button full onPress={signOutAsync}>
+              <Text>Logout</Text>
+            </Button>
+          </Body>
         </CardItem>
       </Card>
-
-    </Container>
-
-
-
-
-
-  );
+    </Content>
+  </Container>
+);
 };
 
 
