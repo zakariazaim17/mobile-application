@@ -5,6 +5,7 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import Home from '../views/Home';
 import Profile from '../views/Profile';
+import Upload from '../views/Upload';
 import Single from '../views/Single';
 import AuthLoading from '../views/AuthLoading';
 import Login from '../views/Login';
@@ -26,6 +27,12 @@ const TabNavigator = createBottomTabNavigator(
         title: 'Profile',
       },
     },
+    Upload: {
+      screen: Upload,
+      navigationOptions: {
+        title: 'Upload',
+      },
+    },
 
   },
 
@@ -38,6 +45,8 @@ const TabNavigator = createBottomTabNavigator(
           iconName = 'home';
         } else if (routeName === 'Profile') {
           iconName = 'person';
+        } else if (routeName === 'Upload') {
+          iconName = 'add';
         }
         return <Icon
              name={iconName}

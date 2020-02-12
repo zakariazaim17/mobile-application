@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
 
 import PropTypes from 'prop-types';
+import {fetchGET} from '../hooks/APIHooks';
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/"
 const Single = (props) => {
@@ -10,6 +11,17 @@ const Single = (props) => {
   const { navigation } = props;
   const fili = navigation.getParam('file', 'not found');
   console.log(fili);
+
+  const getUser = async()=> {
+    try {
+
+      const token = await AsyncStorage.getItem('userToken');
+      const json = await fetchGET('users', file.user_id, token);
+    }
+    catch {
+
+    }
+  }
   return (
     <Container>
       <Card>

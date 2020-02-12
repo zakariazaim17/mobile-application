@@ -1,43 +1,50 @@
-import React, {useContext} from 'react';
-
-import {Image} from 'react-native';
-import{List as BaseList} from 'native-base';
-import PropTypes from 'prop-types';
-
-
-
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  List as BaseList, Spinner, View,
+} from 'native-base';
 import ListItem from './ListItem';
 import {MediaContext} from '../contexts/MediaContexts';
 import {getAllMedia} from '../hooks/APIHooks';
-
+import PropTypes from 'prop-types';
 
 const List = (props) => {
- const [media, setMedia] = useContext(MediaContext);
- const [data, loading] = getAllMedia();
+  const [media, setMedia] = useContext(MediaContext);
+  const [loading, setLoading] = useState(true);
 
- setMedia(data);
+  const getMedia = async () => {
+    try {
+      const data = await getAllMedia();
+      setMedia(data.reverse());
+      setLoading(false);
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  useEffect(() => {
+    getMedia();
+  }, []);
+
   return (
-
-    <BaseList
-    dataArray={media}
-    keyExtractor={(item, index) => index.toString()}
-
-      renderItem={
-        ({item}) =>
-
-      <ListItem
-      navigation ={props.navigation}
-      item={item} />
-
-      }
-      />
-
-
-
+    <View>
+      {loading ? (
+        <Spinner/>
+      ) : (
+        <BaseList
+          dataArray={media}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => <ListItem
+            navigation={props.navigation}
+            item={item}
+          />}
+        />
+      )}
+    </View>
   );
 };
 
 List.propTypes = {
-  style: PropTypes.object,
+  navigation: PropTypes.object,
 };
+
 export default List;

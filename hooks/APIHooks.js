@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-
-const apiUrl = "http://media.mw.metropolia.fi/wbma/";
+import {apiUrl} from '../constants/urlConst';
 
 
 const fetchGET = async (endpoint = '', params = '', token = '') => {
@@ -38,54 +36,45 @@ const fetchPOST = async (endpoint = '', data = {}, token = '') => {
   return json;
 };
 
-
-
-const getAllMedia = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const fetchMedia = async() => {
-
-    try {
-
-
-
-    const json = await fetchGET('media/all');
-    const result = await Promise.all(json.files.map(async (item) => {
-      return await fetchGET('media', item.file_id);
-    }));
-
-    //console.log('apihooks', result);
-
-
-    setData(result);
-    setLoading(false);
-    }catch(e){
-      console.log('getAllMedia error', e.message);
-
-    }
+const fetchFormData = async (
+  endpoint = '', data = new FormData(), token = '') => {
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'x-access-token': token,
+    },
+    body: data,
+  };
+  const response = await fetch(apiUrl + endpoint, fetchOptions);
+  const json = await response.json();
+  console.log(json);
+  if (response.status === 400 || response.status === 401) {
+    const message = Object.values(json).join();
+    throw new Error(message);
+  } else if (response.status > 299) {
+    throw new Error('fetchPOST error: ' + response.status);
   }
-  useEffect(() => {
-    fetchMedia();
-  }, []);
-  return [data, loading];
-}
+  return json;
+};
 
+const fetchprof = async (id) => {
 
+  try {
+  const response = await fetch(apiUrl + `tags/avatar_${id}`);
+  const json = await response.json();
+  console.log('PIIII' + json);
+  return json;
+  } catch(e){
+    console.log('error',e.message);
+  }
+};
 
-    const fetchprof = async (id) => {
+const getAllMedia = async () => {
+  const json = await fetchGET('media/all');
+  const result = await Promise.all(json.files.map(async (item) => {
+    return await fetchGET('media', item.file_id);
+  }));
+  return result;
+};
 
-        try {
-        const response = await fetch(apiUrl + `tags/avatar_${id}`);
-        const json = await response.json();
-        console.log('PIIII' + json);
-        return json;
-        } catch(e){
-          console.log('error',e.message);
-        }
-      };
-
-
-
-
-export { getAllMedia, fetchGET, fetchPOST, fetchprof };
-
+export {getAllMedia, fetchGET, fetchPOST, fetchFormData, fetchprof};

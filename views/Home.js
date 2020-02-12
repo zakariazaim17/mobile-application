@@ -12,7 +12,7 @@ const Home = (props) => {
   const {navigation} = props;
   return (
 
-<Container>
+    <Container>
 
 
     <List navigation={navigation}/>
