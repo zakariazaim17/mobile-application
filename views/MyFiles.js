@@ -7,23 +7,18 @@ import { Container, Header, Title, Content, Footer, FooterTab, Button, Left, Rig
 
 
 
-const Home = (props) => {
+const MyFiles = (props) => {
 
   const {navigation} = props;
   return (
 
-    <Container>
-
-
-    <List navigation={navigation} mode={'all'}/>
-
-    </Container>
+      <List navigation={navigation} mode={'myfiles'}/>
 
   );
 };
 
-Home.propTypes = {
+MyFiles.propTypes = {
   style: PropTypes.object,
 };
 
-export default Home;
+export default MyFiles;

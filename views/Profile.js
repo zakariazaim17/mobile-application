@@ -9,6 +9,7 @@ import {fetchGET} from '../hooks/APIHooks';
 import useSignUpForm from '../hooks/LoginHooks';
 import AsyncImage from '../components/AsyncImage';
 import {Dimensions} from 'react-native';
+import MyFiles from './MyFiles';
 
 const deviceHeight = Dimensions.get('window').height;
 
@@ -85,6 +86,12 @@ return (
           <Body>
             <Button full onPress={signOutAsync}>
               <Text>Logout</Text>
+            </Button>
+
+            <Button full onPress={()=> {
+              props.navigation.navigate('MyFiles');
+            }}>
+              <Text>My files</Text>
             </Button>
           </Body>
         </CardItem>

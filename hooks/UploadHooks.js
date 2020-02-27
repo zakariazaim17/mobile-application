@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {AsyncStorage} from 'react-native';
-import {fetchFormData, getAllMedia} from './APIHooks';
+import {fetchFormData, getAllMedia, getUserMedia, fetchPUT} from './APIHooks';
 
 const useUploadForm = () => {
   const [inputs, setInputs] = useState({});
@@ -56,10 +56,32 @@ const useUploadForm = () => {
     }
   };
 
+
+  const handleModify = async (id, navigation, setMedia) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const resp = await fetchPUT('media', id, inputs, token);
+      console.log('upl resp', resp);
+      if (resp.message) {
+        const data = await getUserMedia(token);
+        setMedia((media) =>
+          ({
+            ...media,
+            myFiles: data,
+          }));
+        setLoading(false);
+        navigation.pop();
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   return {
     handleTitleChange,
     handleDescriptionChange,
     handleUpload,
+    handleModify,
     inputs,
     errors,
     loading,

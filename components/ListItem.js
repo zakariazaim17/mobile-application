@@ -2,9 +2,12 @@ import React from 'react';
 import Single from '../views/Single';
 import PropTypes from 'prop-types';
 
-import { Container, Header, Content, List, Thumbnail, Text, Left, Body, Right, Button } from 'native-base';
+import { Container, Header, Content, List, Thumbnail, Text, Left, Body, Right, Button, Icon, H3 } from 'native-base';
 import {ListItem as Listi} from 'native-base';
 import {StyleSheet, View, FlatList, TouchableOpacity, Image} from 'react-native';
+import {fetchDELETE} from '../hooks/APIHooks';
+import {AsyncStorage} from 'react-native';
+
 
 const mediaURL= "http://media.mw.metropolia.fi/wbma/uploads/"
 const ListItem = (props) => {
@@ -13,7 +16,9 @@ const ListItem = (props) => {
 
 <Listi thumbnail>
               <Left>
-                <Thumbnail square source={{uri:mediaURL + props.item.thumbnails.w160}} />
+                <Thumbnail
+                square
+                source={{uri:mediaURL + props.item.thumbnails.w160}} />
               </Left>
               <Body>
                 <Text>{props.item.title}</Text>
@@ -27,15 +32,53 @@ const ListItem = (props) => {
                     props.navigation.push('Single', {file: props.item.filename, title:props.item.title, description:props.item.description} );
                   }
                 }>
-                  <Text>View</Text>
-                </Button>
+                  <Icon name='eye'/>
+        </Button>
+        {props.mode === 'myfiles' &&
+        <>
+          <Button
+            full
+            warning
+            onPress={
+              () => {
+                props.navigation.push('Modify', {file: props.item});
+              }
+            }
+          >
+            <Icon name='create'/>
+          </Button>
+          <Button
+            full
+            danger
+            onPress={async () => {
+              const token = await AsyncStorage.getItem('userToken');
+              const del = await fetchDELETE('media', props.item.file_id,
+                  token);
+              console.log('delete', del);
+              if (del.message) {
+                props.getMedia(props.mode);
+              }
+            }}
+          >
+            <Icon name='trash'/>
+          </Button>
+        </>
+        }
 
               </Right>
             </Listi>
 
 
-  )
-}
+  );
+};
+
+
+ListItem.propTypes = {
+  item: PropTypes.object,
+  navigation: PropTypes.object,
+  mode: PropTypes.string,
+  getMedia: PropTypes.func,
+};
 
 
 

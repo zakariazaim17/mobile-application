@@ -9,7 +9,8 @@ import Upload from '../views/Upload';
 import Single from '../views/Single';
 import AuthLoading from '../views/AuthLoading';
 import Login from '../views/Login';
-
+import MyFiles from '../views/MyFiles';
+import Modify from '../views/Modify';
 
 
 
@@ -81,10 +82,17 @@ const StackNavigator = createStackNavigator(
       screen: TabNavigator,
       navigationOptions: {
         headerMode: 'none', // this will hide the header
+        headerLeft: ()=>{}, // this will hide back button
       },
     },
     Single: {
       screen: Single,
+    },
+    MyFiles: {
+      screen: MyFiles,
+    },
+    Modify: {
+      screen: Modify,
     },
     Logout: {
       screen: Login,

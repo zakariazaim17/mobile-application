@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 
 const MediaContext = React.createContext([{}, () => {}]);
 
-const mediaArray = [];
+const mediaObject = {
+  allFiles: [],
+  MyFiles: [],
+};
 
 const MediaProvider = (props) => {
-  const [media, setMedia] = useState(mediaArray);
+  const [media, setMedia] = useState(mediaObject);
+
   return (
     <MediaContext.Provider value={[media, setMedia]}>
       {props.children}
